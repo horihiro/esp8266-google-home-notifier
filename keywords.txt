@@ -1,0 +1,3 @@
+GoogleHomeNotifier  KEYWORD1
+device  KEYWORD2
+notify  KEYWORD2

@@ -1,0 +1,77 @@
+#ifndef GoogleHomeNotifier_h
+#define GoogleHomeNotifier_h
+
+#include <pb.h>
+#include <pb_encode.h>
+#include <pb_decode.h>
+#include <cast_channel.pb.h>
+
+#include <WiFiClientSecure.h>
+#include <ESP8266mDNS.h>
+
+#include <google-tts.h>
+
+#define LIB_NAME "GoogleHomeNotifier for ESP8266"
+#define LIB_VERSION "0.1"
+
+#define HOST_GHOME "192.168.0.11"
+#define PORT_GHOME 8009
+
+#define APP_ID "CC1AD845"
+
+#define SOURCE_ID "sender-0"
+#define DESTINATION_ID "receiver-0"
+
+#define CASTV2_NS_CONNECTION "urn:x-cast:com.google.cast.tp.connection"
+#define CASTV2_NS_HEARTBEAT "urn:x-cast:com.google.cast.tp.heartbeat"
+#define CASTV2_NS_RECEIVER "urn:x-cast:com.google.cast.receiver"
+#define CASTV2_NS_MEDIA "urn:x-cast:com.google.cast.media"
+
+#define CASTV2_DATA_CONNECT "{\"type\":\"CONNECT\"}"
+#define CASTV2_DATA_PING "{\"type\":\"PING\"}"
+#define CASTV2_DATA_LAUNCH "{\"type\":\"LAUNCH\",\"appId\":\"%s\",\"requestId\":1}"
+#define CASTV2_DATA_LOAD "{\"type\":\"LOAD\",\"autoplay\":true,\"currentTime\":0,\"activeTrackIds\":[],\"repeatMode\":\"REPEAT_OFF\",\"media\":{\"contentId\":\"%s\",\"contentType\":\"audio/mp3\",\"streamType\":\"BUFFERED\"},\"requestId\":1}"
+
+typedef class GoogleHomeNotifier {
+
+private:
+  char m_transportid[40] = {0};
+  char m_clientid[40] = {0};
+
+// extensions_api_cast_channel_CastMessage omsg;
+// extensions_api_cast_channel_CastMessage imsg;
+// pb_ostream_t ostream;
+// pb_istream_t istream;
+
+// uint8_t pcktSize[4];
+// uint8_t buffer[1024];
+
+// uint32_t message_length;
+// bool status = false;
+// char data[1024];
+// int timeout;
+  TTS tts;
+  WiFiClientSecure m_client;
+  IPAddress m_ipaddress;
+  uint16_t m_port = PORT_GHOME;
+  char m_locale[10] = "en";
+  char m_name[128] = "Google Home";
+  char m_lastError[128] = "";
+  static bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void * const *arg);
+  static bool decode_string(pb_istream_t *stream, const pb_field_t *field, void **arg);
+  boolean connect();
+  boolean play(const char* mp3url);
+  void disconnect();
+  void setLastError(const char* lastError);
+  boolean sendMessage(const char* sourceId, const char* destinationId, const char* ns, const char* data);
+
+public:
+  boolean device(const char * name);
+  boolean device(const char * name, const char * locale);
+  boolean notify(const char * phrase);
+  const IPAddress getIPAddress();
+  const uint16_t getPort();
+  const char * getLastError();
+} GoogleHomeNotifier;
+
+#endif
