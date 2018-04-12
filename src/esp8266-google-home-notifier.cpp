@@ -149,22 +149,21 @@ boolean GoogleHomeNotifier::sendMessage(const char* sourceId, const char* destin
 
 boolean GoogleHomeNotifier::connect()
 {
+  // send 'CONNECT'
   if (this->sendMessage(SOURCE_ID, DESTINATION_ID, CASTV2_NS_CONNECTION, CASTV2_DATA_CONNECT) != true) {
     this->setLastError("'CONNECT' message encoding");
     return false;
   }
   delay(100);
 
-  // castv2 send message: protocolVersion=0 sourceId=sender-0 destinationId=receiver-0 namespace=urn:x-cast:com.google.cast.tp.heartbeat type=0 data={"type":"PING"} +18ms
-  // send 84
+  // send 'PING'
   if (this->sendMessage(SOURCE_ID, DESTINATION_ID, CASTV2_NS_HEARTBEAT, CASTV2_DATA_PING) != true) {
     this->setLastError("'PING' message encoding");
     return false;
   }
   delay(100);
 
-  // castv2 send message: protocolVersion=0 sourceId=sender-0 destinationId=receiver-0 namespace=urn:x-cast:com.google.cast.receiver type=0 data={"type":"LAUNCH","appId":"CC1AD845","requestId":1} +34ms
-  // send 115
+  // send 'LAUNCH'
   sprintf(data, CASTV2_DATA_LAUNCH, APP_ID);
   if (this->sendMessage(SOURCE_ID, DESTINATION_ID, CASTV2_NS_RECEIVER, data) != true) {
     this->setLastError("'LAUNCH' message encoding");
@@ -172,6 +171,7 @@ boolean GoogleHomeNotifier::connect()
   }
   delay(100);
 
+  // waiting for 'PONG' and Transportid
   int timeout = (int)millis() + 5000;
   while (m_client.available() == 0) {
     if (timeout < millis()) {
@@ -220,6 +220,8 @@ boolean GoogleHomeNotifier::connect()
     String json = String((char*)imsg.payload_utf8.arg);
     Serial.println(json);
     int pos = -1;
+
+    // if the incoming message has the transportId, then break;
     if (json.indexOf(String("\"appId\":\"") + APP_ID + "\"") >= 0 &&
         json.indexOf("\"statusText\":\"Ready To Cast\"") >= 0 && 
         (pos = json.indexOf("\"transportId\":")) >= 0
@@ -234,6 +236,7 @@ boolean GoogleHomeNotifier::connect()
 
 boolean GoogleHomeNotifier::play(const char * mp3url)
 {
+  // send 'CONNECT' again
   sprintf(data, CASTV2_DATA_CONNECT);
   if (this->sendMessage(this->m_clientid, this->m_transportid, CASTV2_NS_CONNECTION, CASTV2_DATA_CONNECT) != true) {
     this->setLastError("'CONNECT' message encoding");
@@ -241,53 +244,13 @@ boolean GoogleHomeNotifier::play(const char * mp3url)
   }
   delay(100);
 
+  // send URL of mp3
   sprintf(data, CASTV2_DATA_LOAD, mp3url);
   if (this->sendMessage(this->m_clientid, this->m_transportid, CASTV2_NS_MEDIA, data) != true) {
     this->setLastError("'LOAD' message encoding");
     return false;
   }
   delay(100);
-  // timeout = millis() + 5000;
-  // delay(100);
-  // while(true) {
-  //   if (millis() > timeout) break;
-  //   // read message from Google Home
-  //   m_client.read(pcktSize, 4);
-  //   message_length = 0;
-  //   for(int i=0;i<4;i++) {
-  //     message_length |= pcktSize[i] << 8*(3 - i);
-  //   }
-  //   Serial.println(message_length);
-  //   m_client.read(buffer, message_length);
-  //   istream = pb_istream_from_buffer(buffer, message_length);
-
-  //   imsg.source_id.funcs.decode = &(GoogleHomeNotifier::decode_string);
-  //   imsg.source_id.arg = (void*)"sid";
-  //   imsg.destination_id.funcs.decode = &(GoogleHomeNotifier::decode_string);
-  //   imsg.destination_id.arg = (void*)"did";
-  //   imsg.namespace_str.funcs.decode = &(GoogleHomeNotifier::decode_string);
-  //   imsg.namespace_str.arg = (void*)"ns";
-  //   imsg.payload_utf8.funcs.decode = &(GoogleHomeNotifier::decode_string);
-  //   imsg.payload_utf8.arg = (void*)"body";
-  //   /* Fill in the lucky number */
-
-  //   if (pb_decode(&istream, extensions_api_cast_channel_CastMessage_fields, &imsg) != true){
-  //     Serial.println(">>> Decoding incoming message failed!");
-  //     return false;
-  //   }
-  //   String json = String((char*)imsg.payload_utf8.arg);
-  //   int pos = -1;
-  //   Serial.println(json);
-  //   if (json.indexOf(String("\"appId\":\"") + APP_ID + "\"") >= 0 &&
-  //       json.indexOf("\"statusText\":\"Ready To Cast\"") >= 0 && 
-  //       (pos = json.indexOf("\"transportId\":")) >= 0
-  //       ) {
-  //     sprintf(this->m_transportid, "%s", json.substring(pos + 15, pos + 51).c_str());
-  //     Serial.println(this->m_transportid);
-  //     break;
-  //   }
-  //   delay(500);
-  // }
   this->setLastError("");
   return true;
 }
