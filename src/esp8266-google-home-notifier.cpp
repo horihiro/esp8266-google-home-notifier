@@ -2,6 +2,232 @@
 
 char data[1024];
 
+#ifdef MDNS_H
+extern "C" {
+    #include "osapi.h"
+    #include "ets_sys.h"
+    #include "user_interface.h"
+}
+
+char txtRecordSeparator[64]="#";
+
+struct TXTRecord {
+  char name[128] = "";
+  char value[128] = "";
+  TXTRecord *_next = NULL;
+};
+
+struct GoogleHomeService {
+  char serviceName[256] = "";
+  char hostName[256] = "";
+  char txtRecordsStr[256] = "";
+  uint16_t port = 0;
+  uint8_t ip[4] = {0};
+  TXTRecord *txtRecords = NULL;  
+  GoogleHomeService *_next = NULL;
+};
+
+#define QUESTION_SERVICE "_googlecast._tcp.local"
+GoogleHomeService* m_services = NULL;
+#define MAX_MDNS_PACKET_SIZE 512
+
+void answerCallback(const mdns::Answer* answer){
+  int i = 0;
+  answer->Display();
+  GoogleHomeService* service = m_services;
+  GoogleHomeService* prev = NULL;
+  if (answer->rrtype == MDNS_TYPE_PTR) {
+    // rdata_buffer is serviceName
+    while (service != NULL) {
+      if (strcmp(service->serviceName, answer->rdata_buffer) == 0) {
+        // 
+        break;
+      }
+      prev = service;
+      service = prev->_next;
+    }
+    if (service == NULL) {
+      GoogleHomeService* tmp = (GoogleHomeService*)os_malloc(sizeof(struct GoogleHomeService));
+      os_strcpy(tmp->serviceName, answer->rdata_buffer);
+      if (prev == NULL) {
+        m_services = tmp;
+      } else {
+        prev->_next = tmp;
+      }
+    }
+  } else if (answer->rrtype == MDNS_TYPE_TXT) {
+    // rdata_buffer is TXT record
+    while (service != NULL) {
+      if (strcmp(service->serviceName, answer->name_buffer) == 0) {
+        break;
+      }
+      prev = service;
+      service = prev->_next;
+    }
+    if (service != NULL) {
+
+      i = 0;
+      char* txt;
+      char* pos;
+      TXTRecord* currentTxtRecord = service->txtRecords = (TXTRecord*)os_malloc(sizeof(struct TXTRecord));
+      TXTRecord* prevTxtRecord;
+      do {
+        txt = strtok(i == 0 ? (char*)answer->rdata_buffer : NULL, (const char*)txtRecordSeparator);
+        if (txt == NULL) {
+          os_free(currentTxtRecord);
+          prevTxtRecord->_next = NULL;
+          break;
+        }
+
+        currentTxtRecord->_next = (TXTRecord*)os_malloc(sizeof(struct TXTRecord));
+
+        pos = strchr(txt, '=');
+        *pos = '\0';
+
+        strcpy(currentTxtRecord->name, txt);
+        strcpy(currentTxtRecord->value, pos + 1);
+
+        prevTxtRecord = currentTxtRecord;
+        currentTxtRecord = prevTxtRecord->_next;
+
+        i++;
+      } while (true);
+
+    }
+
+  } else if (answer->rrtype == MDNS_TYPE_SRV) {
+    // rdata_buffer is hostname, port
+    while (service != NULL) {
+      if (strcmp(service->serviceName, answer->name_buffer) == 0) {
+        break;
+      }
+      prev = service;
+      service = prev->_next;
+    }
+    if (service != NULL) {
+      char* hostCh = strstr(answer->rdata_buffer, ";host=");
+      char* portCh = strstr(answer->rdata_buffer, ";port=");
+      strcpy(service->hostName, hostCh + 6);
+      char portStr[6] = "";
+      strncpy(portStr, portCh + 6, hostCh - portCh - 6);
+      service->port = atoi(portStr);
+    }
+
+  } else if (answer->rrtype == MDNS_TYPE_A) {
+    // rdata_buffer is IP address
+    unsigned char ip[4];
+    char* ipaddressStr = (char*)answer->rdata_buffer;
+    char* iprange;
+    i = 0;
+    do {
+      iprange = strtok(i == 0 ? ipaddressStr : NULL, ".");
+      if (iprange == NULL) break;
+      ip[i] = (uint8_t)atoi(iprange);
+      i++;
+    } while (i < 4);
+    while (service != NULL) {
+      if (strcmp(service->hostName, answer->name_buffer) == 0) {
+        for (i=0;i<4;i++) {
+          service->ip[i] = ip[i];
+        }
+      }
+      prev = service;
+      service = prev->_next;
+    }
+    Serial.println("========================");
+    if (prev->serviceName != NULL) {
+      Serial.print("  serv:");
+      Serial.println(prev->serviceName);
+    }
+    if (prev->txtRecords != NULL) {
+      TXTRecord* txt = prev->txtRecords;
+      Serial.println("  txt:");
+      int j = 0;
+      while (txt != NULL) {
+        Serial.print("    ");
+        Serial.println(j);
+        Serial.print("      n:");
+        Serial.println(txt->name);
+        Serial.print("      v:");
+        Serial.println(txt->value);
+        txt = txt->_next;
+        j++;
+      }
+    }
+    if (prev->hostName != NULL) {
+      Serial.print("  host:");
+      Serial.println(prev->hostName);
+    }
+    if (prev->port > 0) {
+      Serial.print("  port:");
+      Serial.println(prev->port);
+    }
+    Serial.print("  iadr:");
+    Serial.print(prev->ip[0]);
+    Serial.print(".");
+    Serial.print(prev->ip[1]);
+    Serial.print(".");
+    Serial.print(prev->ip[2]);
+    Serial.print(".");
+    Serial.println(prev->ip[3]);
+    Serial.println("========================");
+  }
+
+  // GoogleHomeService* svc = m_services;
+
+  // i = 0;
+  // while (svc != NULL) {
+  //   if (svc->ip[0] != 0 || svc->ip[1] != 0 || svc->ip[2] != 0 || svc->ip[3] != 0) {
+  //     Serial.println("========================");
+  //     if (svc->serviceName != NULL) {
+  //       Serial.print("  serv:");
+  //       Serial.println(svc->serviceName);
+  //     }
+  //     if (svc->txtRecords != NULL) {
+  //       TXTRecord* txt = svc->txtRecords;
+  //       Serial.println("  txt:");
+  //       int j = 0;
+  //       while (txt != NULL) {
+  //         Serial.print("    ");
+  //         Serial.println(j);
+  //         Serial.print("      n:");
+  //         Serial.println(txt->name);
+  //         Serial.print("      v:");
+  //         Serial.println(txt->value);
+  //         txt = txt->_next;
+  //         j++;
+  //       }
+  //     }
+  //     if (svc->hostName != NULL) {
+  //       Serial.print("  host:");
+  //       Serial.println(svc->hostName);
+  //     }
+  //     if (svc->port > 0) {
+  //       Serial.print("  port:");
+  //       Serial.println(svc->port);
+  //     }
+  //     Serial.print("  iadr:");
+  //     Serial.print(svc->ip[0]);
+  //     Serial.print(".");
+  //     Serial.print(svc->ip[1]);
+  //     Serial.print(".");
+  //     Serial.print(svc->ip[2]);
+  //     Serial.print(".");
+  //     Serial.println(svc->ip[3]);
+  //     Serial.println("========================");
+  //   }
+  //   svc = svc->_next;
+  //   i++; 
+  // }
+  // Serial.println();
+  // answer->Display();
+  // Serial.println();
+}
+
+byte buffer[MAX_MDNS_PACKET_SIZE];
+mdns::MDns my_mdns(NULL, NULL, answerCallback, buffer, MAX_MDNS_PACKET_SIZE);
+#endif
+
 boolean GoogleHomeNotifier::device(const char * name)
 {
   return this->device(name, "en");
@@ -13,10 +239,29 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale)
   int n;
   char hostString[20];
   sprintf(hostString, "ESP_%06X", ESP.getChipId());
-  IPAddress ip(192, 168, 0, 11);
-  uint16_t port = 8009;
-  this->m_ipaddress = ip;
-  this->m_port = port;
+
+#ifdef MDNS_H
+  for (n = 1; n < 32; n++) {
+    txtRecordSeparator[n] = n;
+  }
+  txtRecordSeparator[32] = '\'';
+
+  struct mdns::Query query_mqtt;
+  strncpy(query_mqtt.qname_buffer, QUESTION_SERVICE, MAX_MDNS_NAME_LEN);
+  query_mqtt.qtype = MDNS_TYPE_PTR;
+  query_mqtt.qclass = 1;    // "INternet"
+  query_mqtt.unicast_response = 0;
+  query_mqtt.Display();
+  my_mdns.AddQuery(query_mqtt);
+
+  my_mdns.Send();
+  while(true) {
+    my_mdns.loop();
+  }
+#endif
+
+#ifdef ESP8266MDNS_H
+  int i;
   if (!MDNS.begin(hostString)) {
     this->setLastError("Failed to set up MDNS responder.");
     return false;
@@ -28,11 +273,18 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale)
       return false;
     }
     delay(10);
-  } while (n <= 0);
-  this->m_ipaddress = MDNS.IP(0);
-  this->m_port = MDNS.port(0);
+    for(i = 0; i < n; i++) {
+      if (strcmp(name, MDNS.txt(i, "fn").c_str()) == 0) {
+        break;
+      }
+    }
+  } while (n <= 0 || i >= n);
+
+  this->m_ipaddress = MDNS.IP(i);
+  this->m_port = MDNS.port(i);
   sprintf(this->m_name, "%s", name);
   sprintf(this->m_locale, "%s", locale);
+#endif
   return true;
 }
 
