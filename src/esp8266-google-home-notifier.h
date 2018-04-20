@@ -38,18 +38,6 @@ private:
   char m_transportid[40] = {0};
   char m_clientid[40] = {0};
 
-// extensions_api_cast_channel_CastMessage omsg;
-// extensions_api_cast_channel_CastMessage imsg;
-// pb_ostream_t ostream;
-// pb_istream_t istream;
-
-// uint8_t pcktSize[4];
-// uint8_t buffer[1024];
-
-// uint32_t message_length;
-// bool status = false;
-// char data[1024];
-// int timeout;
   TTS tts;
   WiFiClientSecure m_client;
   IPAddress m_ipaddress;
@@ -72,6 +60,7 @@ public:
   const IPAddress getIPAddress();
   const uint16_t getPort();
   const char * getLastError();
+
 } GoogleHomeNotifier;
 
 #endif
