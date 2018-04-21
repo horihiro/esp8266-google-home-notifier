@@ -3,6 +3,10 @@ Send notifications to Google Home from esp8266.
 
 This library depends on Google Translate Service.
 
+## Requirement
+This library requires Arduino Core for ESP8266 2.5.0.
+If you use 2.4.1 or earlier, download ESP8266mDNS.cpp/.h from [here](https://github.com/mblythe86/Arduino/tree/master/libraries/ESP8266mDNS) (these are equivalent to the library included in 2.5.0) to `$LIBRARIES/esp8266-google-home-notifier/src/` and restart Arduino IDE. 
+
 ## Usage
 ### Simple
 ```
@@ -47,9 +51,10 @@ void setup() {
   Serial.println(WiFi.localIP());  //Print the local IP
   
   GoogleHomeNotifier ghn;
+  const char displayName = "Family Room";
 
   Serial.println("connecting to Google Home...");
-  if (ghn.device("Google Home", "en") != true) {
+  if (ghn.device(displayName, "en") != true) {
     Serial.println(ghn.getLastError());
     return;
   }
@@ -101,8 +106,10 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());  //Print the local IP
   
+  const char displayName = "Family Room";
+
   Serial.println("connecting to Google Home...");
-  if (ghn.device("Google Home", "en") != true) {
+  if (ghn.device(displayName, "en") != true) {
     Serial.println(ghn.getLastError());
     return;
   }
