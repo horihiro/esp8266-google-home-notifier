@@ -273,9 +273,11 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale)
       return false;
     }
     delay(10);
-    for(i = 0; i < n; i++) {
-      if (strcmp(name, MDNS.txt(i, "fn").c_str()) == 0) {
-        break;
+    if (name != "") {
+      for(i = 0; i < n; i++) {
+        if (strcmp(name, MDNS.txt(i, "fn").c_str()) == 0) {
+          break;
+        }
       }
     }
   } while (n <= 0 || i >= n);
