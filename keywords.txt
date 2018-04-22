@@ -1,3 +1,4 @@
-GoogleHomeNotifier  KEYWORD1
-device  KEYWORD2
-notify  KEYWORD2
+esp8266-google-home-norifier	KEYWORD1
+GoogleHomeNotifier	KEYWORD1
+device	KEYWORD2
+notify	KEYWORD2
