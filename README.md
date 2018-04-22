@@ -16,22 +16,7 @@ If you use 2.4.1 or earlier, download ESP8266mDNS.cpp/.h from [here](https://git
 const char* ssid     = "<REPLASE_YOUR_WIFI_SSID>";
 const char* password = "<REPLASE_YOUR_WIFI_PASSWORD>";
 
-String getMacAddress() {
-  byte mac[6];
-
-  WiFi.macAddress(mac);
-  String cMac = "";
-  for (int i = 0; i < 6; ++i) {
-    if (mac[i] < 0x10) {
-      cMac += "0";
-    }
-    cMac += String(mac[i], HEX);
-    if (i < 5)
-      cMac += ":"; // put : or - if you want byte delimiters
-  }
-  cMac.toUpperCase();
-  return cMac;
-}
+GoogleHomeNotifier ghn;
 
 void setup() {
   // put your setup code here, to run once:
@@ -50,8 +35,7 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());  //Print the local IP
   
-  GoogleHomeNotifier ghn;
-  const char displayName = "Family Room";
+  const char displayName[] = "Family Room";
 
   Serial.println("connecting to Google Home...");
   if (ghn.device(displayName, "en") != true) {
@@ -106,7 +90,7 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());  //Print the local IP
   
-  const char displayName = "Family Room";
+  const char displayName[] = "Family Room";
 
   Serial.println("connecting to Google Home...");
   if (ghn.device(displayName, "en") != true) {
