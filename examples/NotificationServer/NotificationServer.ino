@@ -25,8 +25,10 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());  //Print the local IP
   
+  const char displayName[] = "Family Room";
+
   Serial.println("connecting to Google Home...");
-  if (ghn.device("Google Home", "en") != true) {
+  if (ghn.device(displayName, "en") != true) {
     Serial.println(ghn.getLastError());
     return;
   }

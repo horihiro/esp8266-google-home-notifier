@@ -16,8 +16,8 @@ This library depends on Google Translate Service.
 ## Usage
 ### Simple
 ```
-#include <google-tts.h>
 #include <ESP8266WiFi.h>
+#include <esp8266-google-home-notifier.h>
 
 const char* ssid     = "<REPLASE_YOUR_WIFI_SSID>";
 const char* password = "<REPLASE_YOUR_WIFI_PASSWORD>";
