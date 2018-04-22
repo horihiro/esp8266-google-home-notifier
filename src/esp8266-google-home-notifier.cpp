@@ -240,53 +240,55 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale)
   char hostString[20];
   sprintf(hostString, "ESP_%06X", ESP.getChipId());
 
+  if (strcmp(this->m_name, name) != 0) {
 #ifdef MDNS_H
-  for (n = 1; n < 32; n++) {
-    txtRecordSeparator[n] = n;
-  }
-  txtRecordSeparator[32] = '\'';
+    for (n = 1; n < 32; n++) {
+      txtRecordSeparator[n] = n;
+    }
+    txtRecordSeparator[32] = '\'';
 
-  struct mdns::Query query_mqtt;
-  strncpy(query_mqtt.qname_buffer, QUESTION_SERVICE, MAX_MDNS_NAME_LEN);
-  query_mqtt.qtype = MDNS_TYPE_PTR;
-  query_mqtt.qclass = 1;    // "INternet"
-  query_mqtt.unicast_response = 0;
-  query_mqtt.Display();
-  my_mdns.AddQuery(query_mqtt);
+    struct mdns::Query query_mqtt;
+    strncpy(query_mqtt.qname_buffer, QUESTION_SERVICE, MAX_MDNS_NAME_LEN);
+    query_mqtt.qtype = MDNS_TYPE_PTR;
+    query_mqtt.qclass = 1;    // "INternet"
+    query_mqtt.unicast_response = 0;
+    query_mqtt.Display();
+    my_mdns.AddQuery(query_mqtt);
 
-  my_mdns.Send();
-  while(true) {
-    my_mdns.loop();
-  }
+    my_mdns.Send();
+    while(true) {
+      my_mdns.loop();
+    }
 #endif
 
 #ifdef ESP8266MDNS_H
-  int i;
-  if (!MDNS.begin(hostString)) {
-    this->setLastError("Failed to set up MDNS responder.");
-    return false;
-  }
-  do {
-    n = MDNS.queryService("googlecast", "tcp");
-    if (millis() > timeout) {
-      this->setLastError("mDNS timeout.");
+    int i = 0;
+    if (!MDNS.begin(hostString)) {
+      this->setLastError("Failed to set up MDNS responder.");
       return false;
     }
-    delay(10);
-    if (name != "") {
-      for(i = 0; i < n; i++) {
-        if (strcmp(name, MDNS.txt(i, "fn").c_str()) == 0) {
-          break;
+    do {
+      n = MDNS.queryService("googlecast", "tcp");
+      if (millis() > timeout) {
+        this->setLastError("mDNS timeout.");
+        return false;
+      }
+      delay(1);
+      if (strcmp(name, "") != 0) {
+        for(i = 0; i < n; i++) {
+          if (strcmp(name, MDNS.txt(i, "fn").c_str()) == 0) {
+            break;
+          }
         }
       }
-    }
-  } while (n <= 0 || i >= n);
+    } while (n <= 0 || i >= n);
 
-  this->m_ipaddress = MDNS.IP(i);
-  this->m_port = MDNS.port(i);
+    this->m_ipaddress = MDNS.IP(i);
+    this->m_port = MDNS.port(i);
+#endif
+  }
   sprintf(this->m_name, "%s", name);
   sprintf(this->m_locale, "%s", locale);
-#endif
   return true;
 }
 
