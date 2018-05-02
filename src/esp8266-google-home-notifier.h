@@ -14,9 +14,6 @@
 #define LIB_NAME "GoogleHomeNotifier for ESP8266"
 #define LIB_VERSION "0.1"
 
-#define HOST_GHOME "192.168.0.11"
-#define PORT_GHOME 8009
-
 #define APP_ID "CC1AD845"
 
 #define SOURCE_ID "sender-0"
@@ -41,7 +38,7 @@ private:
   TTS tts;
   WiFiClientSecure m_client;
   IPAddress m_ipaddress;
-  uint16_t m_port = PORT_GHOME;
+  uint16_t m_port = 0;
   char m_locale[10] = "en";
   char m_name[128] = "Google Home";
   char m_lastError[128] = "";
