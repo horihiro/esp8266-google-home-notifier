@@ -21,7 +21,7 @@ This library depends on Google Translate Service.
             └── esp8266-google-home-notifier.h
   ```
   or
-  - use Arduino Core for ESP8266 **2.5.0** (not released as of May 9, 2018) or later<br>
+  - use [Arduino Core for ESP8266](https://github.com/esp8266/Arduino/) **2.5.0** (not released as of May 10, 2018) or later<br>
     (note: above [ESP8266mDNS.cpp](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.cpp)/[.h](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.h) will be [merged into 2.5.0](https://github.com/esp8266/Arduino/pull/3107))<br>
 - [esp8266-google-tts](https://github.com/horihiro/esp8266-google-tts) <br>
   download from Library Manager of Arduino IDE
