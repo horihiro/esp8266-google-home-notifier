@@ -219,7 +219,6 @@ boolean GoogleHomeNotifier::connect()
 
     // if the incoming message has the transportId, then break;
     if (json.indexOf(String("\"appId\":\"") + APP_ID + "\"") >= 0 &&
-        json.indexOf("\"statusText\":\"Ready To Cast\"") >= 0 && 
         (pos = json.indexOf("\"transportId\":")) >= 0
         ) {
       sprintf(this->m_transportid, "%s", json.substring(pos + 15, pos + 51).c_str());
