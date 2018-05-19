@@ -3,6 +3,11 @@ Send notifications to Google Home from esp8266.
 
 This library depends on Google Translate Service.
 
+## Install
+This library can be installed from the Library Manager on Arduino IDE
+
+![](./librarymanager.png)
+
 ## Requirement
 
 - Latest ESP8266mDNS
