@@ -3,6 +3,8 @@ Send notifications to Google Home from esp8266.
 
 This library depends on Google Translate Service.
 
+[This](https://qiita.com/horihiro/items/4ab0edf415916a2cd542) is the Japanese document on [Qiita.com](https://qiita.com/);
+
 ## Install
 This library can be installed from the Library Manager on Arduino IDE
 
