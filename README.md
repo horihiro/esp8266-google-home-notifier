@@ -5,6 +5,9 @@ This library depends on Google Translate Service.
 
 [This](https://qiita.com/horihiro/items/4ab0edf415916a2cd542) is the Japanese document on [Qiita.com](https://qiita.com/);
 
+### !!!CAUTION!!!
+This library is only for esp8266, doesn't work on esp32.
+
 ## Install
 This library can be installed from the Library Manager on Arduino IDE
 
