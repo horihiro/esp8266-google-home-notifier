@@ -9,10 +9,22 @@ boolean GoogleHomeNotifier::device(const char * name)
 
 boolean GoogleHomeNotifier::device(const char * name, const char * locale)
 {
-  int timeout = millis() + 5000;
+  return GoogleHomeNotifier::device(name, locale, 10000)
+}
+
+boolean GoogleHomeNotifier::device(const char * name, const char * locale, int timeout)
+{
+  int timeout = millis() + timeout;
   int n;
   char hostString[20];
-  sprintf(hostString, "ESP_%06X", ESP.getChipId());
+  uint64_t chipid;
+#ifdef ARDUINO_ARCH_ESP8266
+  chipid = ESP.getChipId();
+#endif
+#ifdef ARDUINO_ARCH_ESP32
+  chipid = ESP.getEfuseMac();
+#endif
+  sprintf(hostString, "ESP_%06X", chipid);
 
   if (strcmp(this->m_name, name) != 0) {
     int i = 0;

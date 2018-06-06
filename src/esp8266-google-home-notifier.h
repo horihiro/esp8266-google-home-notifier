@@ -7,7 +7,14 @@
 #include <cast_channel.pb.h>
 
 #include <WiFiClientSecure.h>
+
+#ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266mDNS.h>
+#endif
+
+#ifdef ARDUINO_ARCH_ESP32
+#include <ESPmDNS.h>
+#endif
 
 #include <google-tts.h>
 
@@ -51,8 +58,9 @@ private:
   boolean sendMessage(const char* sourceId, const char* destinationId, const char* ns, const char* data);
 
 public:
-  boolean device(const char * name);
-  boolean device(const char * name, const char * locale);
+  boolean device(const char * name); // locale = 'en', timeout = 10000
+  boolean device(const char * name, const char * locale); // timeout = 10000
+  boolean device(const char * name, const char * locale, int timeout);
   boolean notify(const char * phrase);
   const IPAddress getIPAddress();
   const uint16_t getPort();
