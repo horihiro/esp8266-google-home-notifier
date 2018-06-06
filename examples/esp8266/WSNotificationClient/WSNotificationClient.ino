@@ -1,4 +1,9 @@
+#ifdef ARDUINO_ARCH_8266
 #include <ESP8266WiFi.h>
+#endif
+#ifdef ARDUINO_ARCH_32
+#include <WiFi.h>
+#endif
 #include <WebSocketsClient.h>
 #include <esp8266-google-home-notifier.h>
 
