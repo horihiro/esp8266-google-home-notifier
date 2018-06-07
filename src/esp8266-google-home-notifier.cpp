@@ -9,12 +9,12 @@ boolean GoogleHomeNotifier::device(const char * name)
 
 boolean GoogleHomeNotifier::device(const char * name, const char * locale)
 {
-  return GoogleHomeNotifier::device(name, locale, 10000)
+  return GoogleHomeNotifier::device(name, locale, 10000);
 }
 
-boolean GoogleHomeNotifier::device(const char * name, const char * locale, int timeout)
+boolean GoogleHomeNotifier::device(const char * name, const char * locale, int to)
 {
-  int timeout = millis() + timeout;
+  int timeout = millis() + to;
   int n;
   char hostString[20];
   uint64_t chipid;
