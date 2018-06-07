@@ -5,17 +5,19 @@ This library depends on Google Translate Service.
 
 [This](https://qiita.com/horihiro/items/4ab0edf415916a2cd542) is the Japanese document on [Qiita.com](https://qiita.com/);
 
-### !!!CAUTION!!!
-This library is only for esp8266, doesn't work on esp32.
-
 ## Install
 This library can be installed from the Library Manager on Arduino IDE
 
 ![](./librarymanager.png)
 
 ## Requirement
+- Arduino board 
+  - esp8266
+  - esp32 ( 1.0.2 and later )
+- [esp8266-google-tts](https://github.com/horihiro/esp8266-google-tts) <br>
+  [download from Library Manager](https://github.com/horihiro/esp8266-google-tts/blob/master/README.md#install) of Arduino IDE
 
-- Latest ESP8266mDNS
+- (only for ver 1.0.1 and earlier) Latest ESP8266mDNS
   - download [ESP8266mDNS.cpp](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.cpp)/[.h](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.h) to  `$LIBRARIES_DIR/esp8266-google-home-notifier/src/` and restart Arduino IDE, like below structure. <br>
   ```
   $LIBRARIES_DIR
@@ -33,13 +35,17 @@ This library can be installed from the Library Manager on Arduino IDE
   or
   - use [Arduino Core for ESP8266](https://github.com/esp8266/Arduino/) **2.5.0** (not released as of May 10, 2018) or later<br>
     (note: above [ESP8266mDNS.cpp](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.cpp)/[.h](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.h) will be [merged into 2.5.0](https://github.com/esp8266/Arduino/pull/3107))<br>
-- [esp8266-google-tts](https://github.com/horihiro/esp8266-google-tts) <br>
-  download from Library Manager of Arduino IDE
 
 ## Usage
-### Simple
+### Simple for esp8266/32
 ```
+#ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266WiFi.h>
+#endif
+
+#ifdef ARDUINO_ARCH_ESP32
+#include <WiFi.h>
+#endif
 #include <esp8266-google-home-notifier.h>
 
 const char* ssid     = "<REPLASE_YOUR_WIFI_SSID>";
@@ -90,7 +96,7 @@ void loop() {
 }
 ```
 
-### Notification Server
+### Notification Server for esp8266
 ```
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
