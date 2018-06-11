@@ -43,7 +43,7 @@ private:
   char m_clientid[40] = {0};
 
   TTS tts;
-  WiFiClientSecure m_client;
+  WiFiClientSecure* m_client;
   IPAddress m_ipaddress;
   uint16_t m_port = 0;
   char m_locale[10] = "en";

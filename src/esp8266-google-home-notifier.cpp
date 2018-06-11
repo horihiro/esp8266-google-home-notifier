@@ -69,9 +69,11 @@ boolean GoogleHomeNotifier::notify(const char * phrase)
   }
 
   delay(1);
-  if (!m_client.connect(this->m_ipaddress, this->m_port)) {
+  if(!m_client) m_client = new WiFiClientSecure();
+  if (!m_client->connect(this->m_ipaddress, this->m_port)) {
     sprintf(error, "Failed to Connect to %d.%d.%d.%d:%d.", this->m_ipaddress[0], this->m_ipaddress[1], this->m_ipaddress[2], this->m_ipaddress[3], this->m_port);
     this->setLastError(error);
+    disconnect();
     return false;
   }
   
@@ -149,9 +151,9 @@ boolean GoogleHomeNotifier::sendMessage(const char* sourceId, const char* destin
   for(int i=0;i<4;i++) {
     packetSize[3-i] = (bufferSize >> 8*i) & 0x000000FF;
   }
-  m_client.write(packetSize, 4);
-  m_client.write(buf, bufferSize);
-  m_client.flush();
+  m_client->write(packetSize, 4);
+  m_client->write(buf, bufferSize);
+  m_client->flush();
 
   delay(1);
   delete buf;
@@ -184,7 +186,7 @@ boolean GoogleHomeNotifier::connect()
 
   // waiting for 'PONG' and Transportid
   int timeout = (int)millis() + 5000;
-  while (m_client.available() == 0) {
+  while (m_client->available() == 0) {
     if (timeout < millis()) {
       this->setLastError("Listening timeout");
       return false;
@@ -204,12 +206,12 @@ boolean GoogleHomeNotifier::connect()
       return false;
     }
     // read message from Google Home
-    m_client.read(pcktSize, 4);
+    m_client->read(pcktSize, 4);
     message_length = 0;
     for(int i=0;i<4;i++) {
       message_length |= pcktSize[i] << 8*(3 - i);
     }
-    m_client.read(buffer, message_length);
+    m_client->read(buffer, message_length);
     istream = pb_istream_from_buffer(buffer, message_length);
 
     imsg.source_id.funcs.decode = &(GoogleHomeNotifier::decode_string);
@@ -263,7 +265,11 @@ boolean GoogleHomeNotifier::play(const char * mp3url)
 }
 
 void GoogleHomeNotifier::disconnect() {
-  m_client.stop();
+  if (m_client) {
+    if (m_client->connected()) m_client->stop();
+    delete m_client;
+    m_client = NULL;
+  }
 }
 
 bool GoogleHomeNotifier::encode_string(pb_ostream_t *stream, const pb_field_t *field, void * const *arg)
