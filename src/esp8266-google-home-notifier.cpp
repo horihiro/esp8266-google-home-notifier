@@ -20,9 +20,10 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale, int t
   uint64_t chipid;
 #ifdef ARDUINO_ARCH_ESP8266
   chipid = ESP.getChipId();
-#endif
-#ifdef ARDUINO_ARCH_ESP32
+#elif defined ARDUINO_ARCH_ESP32
   chipid = ESP.getEfuseMac();
+#else
+#error "ARDUINO_ARCH_ESP8266 or ARDUINO_ARCH_ESP32 has to be defined."
 #endif
   sprintf(hostString, "ESP_%06X", chipid);
 
