@@ -13,7 +13,8 @@ This library can be installed from the Library Manager on Arduino IDE
 ## Requirement
 - Arduino board 
   - esp8266
-  - esp32 ( 1.0.2 and later )
+  - esp32<br>
+    (note: 1.0.2 and later, and 1.0.4 requires [83810fa](https://github.com/espressif/arduino-esp32/tree/83810fa1563f77145272583e36dfb076d3a92018)  or later of [arduino-esp32](https://github.com/espressif/arduino-esp32))
 - [esp8266-google-tts](https://github.com/horihiro/esp8266-google-tts) <br>
   [download from Library Manager](https://github.com/horihiro/esp8266-google-tts/blob/master/README.md#install) of Arduino IDE
 
@@ -33,8 +34,7 @@ This library can be installed from the Library Manager on Arduino IDE
             └── esp8266-google-home-notifier.h
   ```
   or
-  - use [Arduino Core for ESP8266](https://github.com/esp8266/Arduino/) **2.5.0** (not released as of May 10, 2018) or later<br>
-    (note: above [ESP8266mDNS.cpp](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.cpp)/[.h](https://github.com/mblythe86/Arduino/blob/master/libraries/ESP8266mDNS/ESP8266mDNS.h) will be [merged into 2.5.0](https://github.com/esp8266/Arduino/pull/3107))<br>
+  - use [Arduino Core for ESP8266](https://github.com/esp8266/Arduino/) **2.5.0**, which will [merge ESP8266mDNS.cpp/.h](https://github.com/esp8266/Arduino/pull/3107), or later.
 
 ## Usage
 ### Simple for esp8266/32
