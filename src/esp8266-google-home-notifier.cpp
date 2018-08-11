@@ -2,17 +2,7 @@
 
 char data[1024];
 
-boolean GoogleHomeNotifier::device(const char * name)
-{
-  return this->device(name, "en");
-}
-
-boolean GoogleHomeNotifier::device(const char * name, const char * locale)
-{
-  return GoogleHomeNotifier::device(name, locale, 10000);
-}
-
-boolean GoogleHomeNotifier::device(const char * name, const char * locale, int to)
+boolean GoogleHomeNotifier::device(const char *name, const char *locale = "en", int to = 10000)
 {
   int timeout = millis() + to;
   int n;
@@ -57,25 +47,29 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale, int t
   return true;
 }
 
-boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale)
+boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale = "en", uint16_t port = 8009)
 {
   this->m_ipaddress = ip;
-  this->m_port = 8009;
+  this->m_port = port;
   sprintf(this->m_locale, "%s", locale);
   return true;
 }
 
-boolean GoogleHomeNotifier::notify(const char * phrase) {
+boolean GoogleHomeNotifier::notify(const char *phrase) {
   return this->cast(phrase, NULL);
 }
 
-boolean GoogleHomeNotifier::play(const char * mp3Url) {
+boolean GoogleHomeNotifier::play(const char *mp3Url) {
   return this->cast(NULL, mp3Url);
 }
 
-boolean GoogleHomeNotifier::cast(const char * phrase, const char * mp3Url)
+boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url)
 {
   char error[128];
+  if((this->m_ipaddress[0] == 0 && this->m_ipaddress[1] == 0 && this->m_ipaddress[2] == 0 && this->m_ipaddress[3] == 0) || this->m_port == 0) {
+    this->setLastError("Google Home's IP address/port is not set. Call 'device' or 'ip' method before calling 'cast' method.");
+    return false;
+  }
   String speechUrl;
   if (phrase != NULL) {
     speechUrl = tts.getSpeechUrl(phrase, m_locale);
@@ -131,7 +125,7 @@ const uint16_t GoogleHomeNotifier::getPort()
   return m_port;
 }
 
-boolean GoogleHomeNotifier::sendMessage(const char* sourceId, const char* destinationId, const char* ns, const char* data)
+boolean GoogleHomeNotifier::sendMessage(const char *sourceId, const char *destinationId, const char *ns, const char *data)
 {
   extensions_api_cast_channel_CastMessage message = extensions_api_cast_channel_CastMessage_init_default;
 
@@ -267,7 +261,7 @@ boolean GoogleHomeNotifier::connect()
   return true;
 }
 
-boolean GoogleHomeNotifier::_play(const char * mp3url)
+boolean GoogleHomeNotifier::_play(const char *mp3url)
 {
   // send 'CONNECT' again
   sprintf(data, CASTV2_DATA_CONNECT);

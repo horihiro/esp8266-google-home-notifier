@@ -52,19 +52,17 @@ private:
   static bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void * const *arg);
   static bool decode_string(pb_istream_t *stream, const pb_field_t *field, void **arg);
   boolean connect();
-  boolean _play(const char* mp3url);
+  boolean _play(const char *mp3url);
   void disconnect();
-  void setLastError(const char* lastError);
-  boolean sendMessage(const char* sourceId, const char* destinationId, const char* ns, const char* data);
-  boolean cast(const char * phrase, const char * mp3Url);
+  void setLastError(const char *lastError);
+  boolean sendMessage(const char *sourceId, const char *destinationId, const char *ns, const char *data);
+  boolean cast(const char *phrase, const char *mp3Url);
 
 public:
-  boolean device(const char * name); // locale = 'en', timeout = 10000
-  boolean device(const char * name, const char * locale); // timeout = 10000
-  boolean device(const char * name, const char * locale, int timeout);
-  boolean ip(IPAddress ip, const char *locale);
-  boolean notify(const char * phrase);
-  boolean play(const char * mp3Url);
+  boolean device(const char *name, const char *locale /* = 'en' */, int timeout /* = 10000 */);
+  boolean ip(IPAddress ip, const char *locale /* = 'en' */, uint16_t port /* = 8009 */ );
+  boolean notify(const char *phrase);
+  boolean play(const char *mp3Url);
   const IPAddress getIPAddress();
   const uint16_t getPort();
   const char * getLastError();
