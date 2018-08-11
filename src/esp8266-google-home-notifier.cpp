@@ -2,7 +2,7 @@
 
 char data[1024];
 
-boolean GoogleHomeNotifier::device(const char *name, const char *locale = "en", int to = 10000)
+boolean GoogleHomeNotifier::device(const char *name, const char *locale, int to)
 {
   int timeout = millis() + to;
   int n;
@@ -47,7 +47,7 @@ boolean GoogleHomeNotifier::device(const char *name, const char *locale = "en", 
   return true;
 }
 
-boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale = "en", uint16_t port = 8009)
+boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale, uint16_t port)
 {
   this->m_ipaddress = ip;
   this->m_port = port;

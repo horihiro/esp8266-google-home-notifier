@@ -1,4 +1,6 @@
 esp8266-google-home-notifier	KEYWORD1
 GoogleHomeNotifier	KEYWORD1
 device	KEYWORD2
+ip	KEYWORD2
+play	KEYWORD2
 notify	KEYWORD2
