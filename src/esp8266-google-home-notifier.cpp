@@ -57,15 +57,38 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale, int t
   return true;
 }
 
-boolean GoogleHomeNotifier::notify(const char * phrase)
+boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale)
+{
+  this->m_ipaddress = ip;
+  this->m_port = 8009;
+  sprintf(this->m_locale, "%s", locale);
+  return true;
+}
+
+boolean GoogleHomeNotifier::notify(const char * phrase) {
+  return this->cast(phrase, NULL);
+}
+
+boolean GoogleHomeNotifier::play(const char * mp3Url) {
+  return this->cast(NULL, mp3Url);
+}
+
+boolean GoogleHomeNotifier::cast(const char * phrase, const char * mp3Url)
 {
   char error[128];
   String speechUrl;
-  speechUrl = tts.getSpeechUrl(phrase, m_locale);
-  delay(1);
+  if (phrase != NULL) {
+    speechUrl = tts.getSpeechUrl(phrase, m_locale);
+    delay(1);
 
-  if (speechUrl.indexOf("https://") != 0) {
-    this->setLastError("Failed to get TTS url.");
+    if (speechUrl.indexOf("https://") != 0) {
+      this->setLastError("Failed to get TTS url.");
+      return false;
+    }
+  } else if (mp3Url != NULL) {
+    speechUrl = mp3Url;
+  } else {
+    this->setLastError("Both TTS phrase and mp3 url are NULL.");
     return false;
   }
 
@@ -87,7 +110,7 @@ boolean GoogleHomeNotifier::notify(const char * phrase)
   }
    
   delay(1);
-  if( this->play(speechUrl.c_str()) != true) {
+  if( this->_play(speechUrl.c_str()) != true) {
     sprintf(error, "Failed to play mp3 file. (%s)", this->getLastError());
     this->setLastError(error);
     disconnect();
@@ -244,7 +267,7 @@ boolean GoogleHomeNotifier::connect()
   return true;
 }
 
-boolean GoogleHomeNotifier::play(const char * mp3url)
+boolean GoogleHomeNotifier::_play(const char * mp3url)
 {
   // send 'CONNECT' again
   sprintf(data, CASTV2_DATA_CONNECT);
