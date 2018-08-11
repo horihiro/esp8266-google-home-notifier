@@ -21,11 +21,11 @@ boolean GoogleHomeNotifier::device(const char * name, const char * locale, int t
 #ifdef ARDUINO_ARCH_ESP8266
   chipid = ESP.getChipId();
 #elif defined ARDUINO_ARCH_ESP32
-  chipid = ESP.getEfuseMac();
+  chipid = ESP.getEfuseMac() & 0x00000000FFFFFFFF;
 #else
 #error "ARDUINO_ARCH_ESP8266 or ARDUINO_ARCH_ESP32 has to be defined."
 #endif
-  sprintf(hostString, "ESP_%06X", chipid);
+  sprintf(hostString, "ESP_%06llX", chipid);
 
   if (strcmp(this->m_name, name) != 0) {
     int i = 0;
@@ -240,7 +240,7 @@ boolean GoogleHomeNotifier::connect()
       break;
     }
   }
-  sprintf(this->m_clientid, "client-%d", millis());
+  sprintf(this->m_clientid, "client-%lu", millis());
   return true;
 }
 
