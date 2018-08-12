@@ -6,16 +6,14 @@ boolean GoogleHomeNotifier::device(const char *name, const char *locale, int to)
 {
   int timeout = millis() + to;
   int n;
-  char hostString[20];
-  uint64_t chipid;
+  char hostString[32];
 #ifdef ARDUINO_ARCH_ESP8266
-  chipid = ESP.getChipId();
+  sprintf(hostString, "ESP_%X", ESP.getChipId());
 #elif defined ARDUINO_ARCH_ESP32
-  chipid = ESP.getEfuseMac() & 0x00000000FFFFFFFF;
+  sprintf(hostString, "ESP_%llX", ESP.getEfuseMac());
 #else
 #error "ARDUINO_ARCH_ESP8266 or ARDUINO_ARCH_ESP32 has to be defined."
 #endif
-  sprintf(hostString, "ESP_%06llX", chipid);
 
   if (strcmp(this->m_name, name) != 0) {
     int i = 0;
