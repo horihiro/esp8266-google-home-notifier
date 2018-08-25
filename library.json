@@ -8,5 +8,11 @@
     "url": "https://github.com/horihiro/esp8266-google-home-notifier"
   },
   "frameworks": "arduino",
-  "platforms": "espressif"
+  "platforms": "espressif",
+  "dependencies":
+  [
+      {
+          "name":"esp8266-google-tts"
+      }
+  ]
 }
