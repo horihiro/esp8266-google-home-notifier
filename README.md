@@ -34,7 +34,8 @@ This library can be installed from the Library Manager on Arduino IDE
             └── esp8266-google-home-notifier.h
   ```
   or
-  - use [Arduino Core for ESP8266](https://github.com/esp8266/Arduino/) **2.5.0**, which will [merge ESP8266mDNS.cpp/.h](https://github.com/esp8266/Arduino/pull/3107), or later.
+  - ~~use [Arduino Core for ESP8266](https://github.com/esp8266/Arduino/) **2.5.0**, which will [merge ESP8266mDNS.cpp/.h](https://github.com/esp8266/Arduino/pull/3107), or later.~~<br>
+  -> The PR wasn't merged, so MDNS handling in this library should be fix under ESP8266 cor 2.5.0 or later.
 
 ## Usage
 ### Simple for esp8266/32
