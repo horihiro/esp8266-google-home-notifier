@@ -47,7 +47,7 @@ private:
   IPAddress m_ipaddress;
   uint16_t m_port = 0;
   char m_locale[10] = "en";
-  char m_name[128] = "Google Home";
+  char m_name[128] = "";
   char m_lastError[128] = "";
   static bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void * const *arg);
   static bool decode_string(pb_istream_t *stream, const pb_field_t *field, void **arg);
