@@ -43,7 +43,8 @@ private:
   char m_clientid[40] = {0};
 
   TTS tts;
-  WiFiClientSecure* m_client;
+  WiFiClientSecure* m_client = NULL;
+  boolean m_clientCreated = false;
   IPAddress m_ipaddress;
   uint16_t m_port = 0;
   char m_locale[10] = "en";
@@ -56,13 +57,13 @@ private:
   void disconnect();
   void setLastError(const char *lastError);
   boolean sendMessage(const char *sourceId, const char *destinationId, const char *ns, const char *data);
-  boolean cast(const char *phrase, const char *mp3Url);
+  boolean cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient = NULL);
 
 public:
   boolean ip(IPAddress ip, const char *locale = "en", uint16_t port = 8009);
   boolean device(const char *name, const char *locale = "en", int to = 10000);
-  boolean notify(const char *phrase);
-  boolean play(const char *mp3Url);
+  boolean notify(const char *phrase, WiFiClientSecure* pClient = NULL);
+  boolean play(const char *mp3Url, WiFiClientSecure* pClient = NULL);
   const IPAddress getIPAddress();
   const uint16_t getPort();
   const char * getLastError();

@@ -53,15 +53,15 @@ boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale, uint16_t port)
   return true;
 }
 
-boolean GoogleHomeNotifier::notify(const char *phrase) {
-  return this->cast(phrase, NULL);
+boolean GoogleHomeNotifier::notify(const char *phrase, WiFiClientSecure* pClient) {
+  return this->cast(phrase, NULL, pClient);
 }
 
-boolean GoogleHomeNotifier::play(const char *mp3Url) {
-  return this->cast(NULL, mp3Url);
+boolean GoogleHomeNotifier::play(const char *mp3Url, WiFiClientSecure* pClient) {
+  return this->cast(NULL, mp3Url, pClient);
 }
 
-boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url)
+boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient)
 {
   char error[128];
   if((this->m_ipaddress[0] == 0 && this->m_ipaddress[1] == 0 && this->m_ipaddress[2] == 0 && this->m_ipaddress[3] == 0) || this->m_port == 0) {
@@ -69,23 +69,39 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url)
     return false;
   }
   String speechUrl;
+  if (pClient != NULL) {
+    if (m_client != NULL) delete m_client;
+    m_client = pClient;
+    m_clientCreated = false;
+  } else if(!m_client) {
+    m_client = new WiFiClientSecure();
+    m_clientCreated = true;
+  }
   if (phrase != NULL) {
+    tts.setWiFiClientSecure(m_client);
     speechUrl = tts.getSpeechUrl(phrase, m_locale);
     delay(1);
 
     if (speechUrl.indexOf("https://") != 0) {
       this->setLastError("Failed to get TTS url.");
+      if (m_clientCreated == true) {
+        delete m_client;
+        m_client = NULL;
+      }
       return false;
     }
   } else if (mp3Url != NULL) {
     speechUrl = mp3Url;
   } else {
     this->setLastError("Both TTS phrase and mp3 url are NULL.");
+    if (m_clientCreated == true) {
+      delete m_client;
+      m_client = NULL;
+    }
     return false;
   }
 
   delay(1);
-  if(!m_client) m_client = new WiFiClientSecure();
   if (!m_client->connect(this->m_ipaddress, this->m_port)) {
     sprintf(error, "Failed to Connect to %d.%d.%d.%d:%d.", this->m_ipaddress[0], this->m_ipaddress[1], this->m_ipaddress[2], this->m_ipaddress[3], this->m_port);
     this->setLastError(error);
@@ -283,8 +299,10 @@ boolean GoogleHomeNotifier::_play(const char *mp3url)
 void GoogleHomeNotifier::disconnect() {
   if (m_client) {
     if (m_client->connected()) m_client->stop();
-    delete m_client;
-    m_client = NULL;
+    if (m_clientCreated == true) {
+      delete m_client;
+      m_client = NULL;
+    }
   }
 }
 
