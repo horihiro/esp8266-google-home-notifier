@@ -17,9 +17,12 @@ boolean GoogleHomeNotifier::device(const char *name, const char *locale, int to)
 
   if (strcmp(this->m_name, name) != 0) {
     int i = 0;
-    if (!MDNS.begin(hostString)) {
-      this->setLastError("Failed to set up MDNS responder.");
-      return false;
+    if (!this->m_mDNSIsRunning) {
+      if (!MDNS.begin(hostString)) {
+        this->setLastError("Failed to set up MDNS responder.");
+        return false;
+      }
+      this->m_mDNSIsRunning = true;
     }
     do {
       n = MDNS.queryService("googlecast", "tcp");
