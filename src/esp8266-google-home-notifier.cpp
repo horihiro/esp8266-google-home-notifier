@@ -57,11 +57,11 @@ boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale, uint16_t port)
 }
 
 boolean GoogleHomeNotifier::notify(const char *phrase, WiFiClientSecure* pClient) {
-  return this->cast(phrase, NULL, pClient);
+  return this->cast(phrase, nullptr, pClient);
 }
 
 boolean GoogleHomeNotifier::play(const char *mp3Url, WiFiClientSecure* pClient) {
-  return this->cast(NULL, mp3Url, pClient);
+  return this->cast(nullptr, mp3Url, pClient);
 }
 
 boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient)
@@ -72,15 +72,14 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiCli
     return false;
   }
   String speechUrl;
-  if (pClient != NULL) {
-    if (m_client != NULL) delete m_client;
+  if (pClient != nullptr) {
     m_client = pClient;
     m_clientCreated = false;
   } else if(!m_client) {
     m_client = new WiFiClientSecure();
     m_clientCreated = true;
   }
-  if (phrase != NULL) {
+  if (phrase != nullptr) {
     tts.setWiFiClientSecure(m_client);
     speechUrl = tts.getSpeechUrl(phrase, m_locale);
     delay(1);
@@ -89,17 +88,17 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiCli
       this->setLastError("Failed to get TTS url.");
       if (m_clientCreated == true) {
         delete m_client;
-        m_client = NULL;
+        m_client = nullptr;
       }
       return false;
     }
-  } else if (mp3Url != NULL) {
+  } else if (mp3Url != nullptr) {
     speechUrl = mp3Url;
   } else {
-    this->setLastError("Both TTS phrase and mp3 url are NULL.");
+    this->setLastError("Both TTS phrase and mp3 url are nullptr.");
     if (m_clientCreated == true) {
       delete m_client;
-      m_client = NULL;
+      m_client = nullptr;
     }
     return false;
   }
@@ -157,7 +156,7 @@ boolean GoogleHomeNotifier::sendMessage(const char *sourceId, const char *destin
   message.payload_utf8.funcs.encode = &(GoogleHomeNotifier::encode_string);
   message.payload_utf8.arg = (void*)data;
 
-  uint8_t* buf = NULL;
+  uint8_t* buf = nullptr;
   uint32_t bufferSize = 0;
   uint8_t packetSize[4];
   boolean status;
@@ -304,7 +303,7 @@ void GoogleHomeNotifier::disconnect() {
     if (m_client->connected()) m_client->stop();
     if (m_clientCreated == true) {
       delete m_client;
-      m_client = NULL;
+      m_client = nullptr;
     }
   }
 }

@@ -58,13 +58,13 @@ private:
   void disconnect();
   void setLastError(const char *lastError);
   boolean sendMessage(const char *sourceId, const char *destinationId, const char *ns, const char *data);
-  boolean cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient = NULL);
+  boolean cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient = nullptr);
 
 public:
   boolean ip(IPAddress ip, const char *locale = "en", uint16_t port = 8009);
   boolean device(const char *name, const char *locale = "en", int to = 10000);
-  boolean notify(const char *phrase, WiFiClientSecure* pClient = NULL);
-  boolean play(const char *mp3Url, WiFiClientSecure* pClient = NULL);
+  boolean notify(const char *phrase, WiFiClientSecure* pClient = nullptr);
+  boolean play(const char *mp3Url, WiFiClientSecure* pClient = nullptr);
   const IPAddress getIPAddress();
   const uint16_t getPort();
   const char * getLastError();
