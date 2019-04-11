@@ -43,6 +43,11 @@ License (MIT license):
 #ifndef ESP8266MDNS_H
 #define ESP8266MDNS_H
 
+#include <core_version.h>
+#if defined(ARDUINO_ESP8266_RELEASE_2_4_2) || defined(ARDUINO_ESP8266_RELEASE_2_4_1) || defined(ARDUINO_ESP8266_RELEASE_2_4_0) || defined(ARDUINO_ESP8266_RELEASE_2_4_0_RC2) || defined(ARDUINO_ESP8266_RELEASE_2_4_0_RC1) || defined(ARDUINO_ESP8266_RELEASE_2_4_0) || defined(ARDUINO_ESP8266_RELEASE_2_3_0) || defined(ARDUINO_ESP8266_RELEASE_2_2_0) || defined(ARDUINO_ESP8266_RELEASE_2_1_0) || defined(ARDUINO_ESP8266_RELEASE_2_0_0)
+#define ARDUINO_ESP8266_RELEASE_OLDER_THAN_2_5_0
+#endif
+
 #include "ESP8266WiFi.h"
 #include "WiFiUdp.h"
 

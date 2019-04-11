@@ -296,13 +296,20 @@ bool MDNSResponder::_listen() {
 
     _conn = new UdpContext;
     _conn->ref();
-
+#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)
     if (!_conn->listen(*IP_ADDR_ANY, MDNS_PORT)) {
+#else
+    if (!_conn->listen(IP_ADDR_ANY, MDNS_PORT)) {
+#endif
       return false;
     }
     _conn->setMulticastTTL(MDNS_MULTICAST_TTL);
     _conn->onRx(std::bind(&MDNSResponder::update, this));
+#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)
     _conn->connect(multicast_addr, MDNS_PORT);
+#else
+    _conn->connect(&multicast_addr, MDNS_PORT);
+#endif
   }
   return true;
 }

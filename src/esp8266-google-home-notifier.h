@@ -10,6 +10,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266mDNS.h>
+#include "esp8266sdk_version.h"
 #elif defined ARDUINO_ARCH_ESP32
 #include <ESPmDNS.h>
 #else
