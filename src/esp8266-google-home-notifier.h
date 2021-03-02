@@ -62,6 +62,7 @@ private:
   boolean cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient = nullptr);
 
 public:
+  void setLanguage(const char *locale);
   boolean ip(IPAddress ip, const char *locale = "en", uint16_t port = 8009);
   boolean device(const char *name, const char *locale = "en", int to = 10000);
   boolean notify(const char *phrase, WiFiClientSecure* pClient = nullptr);

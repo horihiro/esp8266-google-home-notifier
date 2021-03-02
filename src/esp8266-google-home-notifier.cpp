@@ -48,6 +48,11 @@ boolean GoogleHomeNotifier::device(const char *name, const char *locale, int to)
   return true;
 }
 
+void setLanguage(const char *locale)
+{
+  sprintf(this->m_locale, "%s", locale);
+}
+
 boolean GoogleHomeNotifier::ip(IPAddress ip, const char *locale, uint16_t port)
 {
   this->m_ipaddress = ip;
