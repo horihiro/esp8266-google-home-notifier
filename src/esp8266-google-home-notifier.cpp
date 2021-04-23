@@ -96,10 +96,9 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiCli
   else if (!m_client)
   {
     m_client = new WiFiClientSecure();
-#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)
+#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0) || (defined(ARDUINO_ARCH_ESP32) && !defined(ARDUINO_ESP32_RELEASE_BEFORE_THAN_1_0_5))
     m_client->setInsecure();
 #endif
-    m_client->setInsecure();
     m_clientCreated = true;
   }
   if (phrase != nullptr)
@@ -135,10 +134,9 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiCli
   }
 
   delay(1);
-#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)
+#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0) || (defined(ARDUINO_ARCH_ESP32) && !defined(ARDUINO_ESP32_RELEASE_BEFORE_THAN_1_0_5))
   m_client->setInsecure();
 #endif
-  m_client->setInsecure();
   if (!m_client->connect(this->m_ipaddress, this->m_port))
   {
     sprintf(error, "Failed to Connect to %d.%d.%d.%d:%d.", this->m_ipaddress[0], this->m_ipaddress[1], this->m_ipaddress[2], this->m_ipaddress[3], this->m_port);
