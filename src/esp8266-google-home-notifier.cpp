@@ -77,7 +77,7 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiCli
     m_clientCreated = false;
   } else if(!m_client) {
     m_client = new WiFiClientSecure();
-#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)
+#if (defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)) || (defined(ARDUINO_ARCH_ESP32) && !defined(ARDUINO_ESP32_RELEASE_BEFORE_THAN_1_0_5))
     m_client->setInsecure();
 #endif
     m_clientCreated = true;
@@ -107,7 +107,7 @@ boolean GoogleHomeNotifier::cast(const char *phrase, const char *mp3Url, WiFiCli
   }
 
   delay(1);
-#if defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)
+#if (defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ESP8266_RELEASE_BEFORE_THAN_2_5_0)) || (defined(ARDUINO_ARCH_ESP32) && !defined(ARDUINO_ESP32_RELEASE_BEFORE_THAN_1_0_5))
   m_client->setInsecure();
 #endif
   if (!m_client->connect(this->m_ipaddress, this->m_port)) {
