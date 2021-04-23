@@ -1,6 +1,6 @@
 {
   "name": "esp8266-google-home-notifier",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "keywords": "esp8266, Google Home, TTS, Google, TextToSpeech, Text2Speech",
   "description": "Send notifications to Google Home from esp8266. This library requires esp8266 2.5.0 or higher and esp8266-google-tts which depends on Google Translate Service.",
   "repository":
