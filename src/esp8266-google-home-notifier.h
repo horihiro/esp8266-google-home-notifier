@@ -10,7 +10,7 @@
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include <ESP8266mDNS.h>
-#include "esp8266sdk_version.h"
+#include "esp_sdk_version.h"
 #elif defined ARDUINO_ARCH_ESP32
 #include <ESPmDNS.h>
 #else
@@ -37,14 +37,15 @@
 #define CASTV2_DATA_LAUNCH "{\"type\":\"LAUNCH\",\"appId\":\"%s\",\"requestId\":1}"
 #define CASTV2_DATA_LOAD "{\"type\":\"LOAD\",\"autoplay\":true,\"currentTime\":0,\"activeTrackIds\":[],\"repeatMode\":\"REPEAT_OFF\",\"media\":{\"contentId\":\"%s\",\"contentType\":\"audio/mp3\",\"streamType\":\"BUFFERED\"},\"requestId\":1}"
 
-typedef class GoogleHomeNotifier {
+typedef class GoogleHomeNotifier
+{
 
 private:
   char m_transportid[40] = {0};
   char m_clientid[40] = {0};
 
   TTS tts;
-  WiFiClientSecure* m_client = nullptr;
+  WiFiClientSecure *m_client = nullptr;
   boolean m_clientCreated = false;
   IPAddress m_ipaddress;
   uint16_t m_port = 0;
@@ -52,24 +53,24 @@ private:
   char m_name[128] = "";
   char m_lastError[128] = "";
   bool m_mDNSIsRunning = false;
-  static bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void * const *arg);
+  static bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg);
   static bool decode_string(pb_istream_t *stream, const pb_field_t *field, void **arg);
   boolean connect();
   boolean _play(const char *mp3url);
   void disconnect();
   void setLastError(const char *lastError);
   boolean sendMessage(const char *sourceId, const char *destinationId, const char *ns, const char *data);
-  boolean cast(const char *phrase, const char *mp3Url, WiFiClientSecure* pClient = nullptr);
+  boolean cast(const char *phrase, const char *mp3Url, WiFiClientSecure *pClient = nullptr);
 
 public:
   void setLanguage(const char *locale);
   boolean ip(IPAddress ip, const char *locale = "en", uint16_t port = 8009);
   boolean device(const char *name, const char *locale = "en", int to = 10000);
-  boolean notify(const char *phrase, WiFiClientSecure* pClient = nullptr);
-  boolean play(const char *mp3Url, WiFiClientSecure* pClient = nullptr);
+  boolean notify(const char *phrase, WiFiClientSecure *pClient = nullptr);
+  boolean play(const char *mp3Url, WiFiClientSecure *pClient = nullptr);
   const IPAddress getIPAddress();
   const uint16_t getPort();
-  const char * getLastError();
+  const char *getLastError();
 
 } GoogleHomeNotifier;
 
