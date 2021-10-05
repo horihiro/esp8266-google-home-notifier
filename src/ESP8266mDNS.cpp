@@ -566,7 +566,7 @@ MDNSTxt * MDNSResponder::_getServiceTxt(char *name, char *proto){
   MDNSService* servicePtr;
   for (servicePtr = _services; servicePtr; servicePtr = servicePtr->_next) {
     if(servicePtr->_port > 0 && strcmp(servicePtr->_name, name) == 0 && strcmp(servicePtr->_proto, proto) == 0){
-      if (servicePtr->_txts == 0) return false;
+      if (servicePtr->_txts == 0) return 0;
       else{
         return servicePtr->_txts;
       }
@@ -579,7 +579,7 @@ uint16_t MDNSResponder::_getServiceTxtLen(char *name, char *proto){
   MDNSService* servicePtr;
   for (servicePtr = _services; servicePtr; servicePtr = servicePtr->_next) {
     if(servicePtr->_port > 0 && strcmp(servicePtr->_name, name) == 0 && strcmp(servicePtr->_proto, proto) == 0){
-      if (servicePtr->_txts == 0) return false;
+      if (servicePtr->_txts == 0) return 0;
       else{
         return servicePtr->_txtLen;
       }
