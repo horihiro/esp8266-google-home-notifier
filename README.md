@@ -12,7 +12,7 @@ This library can be installed from the Library Manager on Arduino IDE
 
 ## Requirement
 - Arduino board 
-  - esp8266
+  - esp8266 ***Arduino Core ESP8266 2.x only**
   - esp32<br>
     (note: 1.0.2 and later, and 1.0.4 requires [83810fa](https://github.com/espressif/arduino-esp32/tree/83810fa1563f77145272583e36dfb076d3a92018)  or later of [arduino-esp32](https://github.com/espressif/arduino-esp32))
 - [esp8266-google-tts](https://github.com/horihiro/esp8266-google-tts) <br>
